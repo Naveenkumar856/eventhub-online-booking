@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Festival Events | EventHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fff8ef;color:#222;min-height:100vh}
+header{background:linear-gradient(135deg,#ff3d2e,#ff9418);color:white;padding:45px 20px;text-align:center}
+header h1{font-size:48px;margin-bottom:12px}
+header p{font-size:20px}
+nav{background:#fff;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:16px;box-shadow:0 3px 12px rgba(0,0,0,.1)}
+nav a{color:#e63b2e;text-decoration:none;font-weight:bold;padding:10px 18px;border-radius:25px}
+nav a:hover{background:#ff5722;color:white}
+.events-section{padding:50px 20px;max-width:1200px;margin:auto}
+.events-section>h2{text-align:center;font-size:38px;margin-bottom:12px;color:#e53935}
+.subtitle{text-align:center;color:#666;font-size:18px;margin-bottom:40px}
+.events-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}
+.event-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.12);transition:.3s;border-top:6px solid #ff5722}
+.event-card:hover{transform:translateY(-7px);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.event-banner{background:linear-gradient(135deg,#ff3d2e,#ff9f1c);height:120px;display:flex;align-items:center;justify-content:center;font-size:55px}
+.event-content{padding:24px}
+.event-content h3{font-size:25px;color:#e53935;margin-bottom:18px}
+.event-content p{font-size:16px;margin:10px 0;color:#444}
+.book-btn{width:100%;border:0;background:linear-gradient(90deg,#ff3d2e,#ff9418);color:white;font-size:17px;font-weight:bold;padding:14px;border-radius:30px;cursor:pointer;margin-top:15px}
+.book-btn:hover{transform:scale(1.02)}
+.book-btn:disabled{background:#aaa;cursor:not-allowed;transform:none}
+.message{text-align:center;font-size:20px;padding:40px;color:#e53935}
+footer{text-align:center;background:#2d1a14;color:white;padding:25px;margin-top:40px}
+@media(max-width:600px){header h1{font-size:34px}.events-section>h2{font-size:30px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🎉 EventHub 🎉</h1>
+<p>Celebrate • Discover • Book • Enjoy</p>
+</header>
+<nav>
+<a href="index.html">🏠 Home</a>
+<a href="events.html">🎊 Events</a>
+<a href="mybookings.html">🎟 My Bookings</a>
+<a href="login.html">🔐 Login</a>
+</nav>
+<section class="events-section">
+<h2>🎊 Upcoming Festival Events</h2>
+<p class="subtitle">Discover amazing events and book your tickets today!</p>
+<div id="eventsContainer" class="events-container">
+<div class="message">Loading events...</div>
+</div>
+</section>
+<footer>🎉 EventHub | Online Event Booking & Management System</footer>
+<script>
+async function loadEvents(){
+const container=document.getElementById("eventsContainer");
+try{
+const response=await fetch("/api/events");
+const text=await response.text();
+let events;
+try{
+events=JSON.parse(text);
+}catch(error){
+throw new Error("Events API returned invalid data");
+}
+if(!response.ok){
+throw new Error(events.message||"Unable to load events");
+}
+container.innerHTML="";
+if(!Array.isArray(events)||events.length===0){
+container.innerHTML='<div class="message">🎪 No events available right now.</div>';
+return;
+}
+events.forEach(event=>{
+const card=document.createElement("div");
+card.className="event-card";
+const eventDate=event.date?new Date(event.date).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"}):"Date not available";
+const seats=Number(event.seats)||0;
+card.innerHTML=`<div class="event-banner">🎊</div><div class="event-content"><h3>${escapeHtml(event.title||"Festival Event")}</h3><p>📍 <strong>Venue:</strong> ${escapeHtml(event.venue||"Not available")}</p><p>📅 <strong>Date:</strong> ${eventDate}</p><p>🎟 <strong>Price:</strong> ₹${Number(event.price)||0}</p><p>💺 <strong>Available Seats:</strong> ${seats}</p><button class="book-btn" ${seats<=0?"disabled":""} onclick="bookEvent('${event._id}')">${seats<=0?"Sold Out":"🎟 Book Now"}</button></div>`;
+container.appendChild(card);
+});
+}catch(error){
+console.error("EVENT ERROR:",error);
+container.innerHTML='<div class="message">❌ Unable to load events.</div>';
+}
+}
+async function bookEvent(eventId){
+const token=localStorage.getItem("token");
+const storedUser=localStorage.getItem("user");
+if(!token||!storedUser){
+alert("Please login before booking.");
+window.location.href="login.html";
+return;
+}
+let user;
+try{
+user=JSON.parse(storedUser);
+}catch(error){
+localStorage.removeItem("token");
+localStorage.removeItem("user");
+alert("Your login session is invalid. Please login again.");
+window.location.href="login.html";
+return;
+}
+const value=prompt("🎟 Enter number of tickets:");
+if(value===null)return;
+const tickets=Number(value);
+if(!Number.isInteger(tickets)||tickets<1){
+alert("Please enter a valid number of tickets.");
+return;
+}
+try{
+const response=await fetch("/api/bookings",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+body:JSON.stringify({
+userId:user.id||user._id,
+eventId:eventId,
+tickets:tickets
+})
+});
+const text=await response.text();
+let data;
+try{
+data=JSON.parse(text);
+}catch(error){
+console.error("BOOKING RAW RESPONSE:",text);
+alert("Booking API is not returning valid JSON.");
+return;
+}
+if(!response.ok){
+alert(data.message||"Booking failed.");
+return;
+}
+if(!data.booking){
+alert("Booking server returned invalid data.");
+return;
+}
+alert("🎉 Booking Successful!\nTicket Number: "+(data.booking.ticketNumber||"Generated")+"\nTickets: "+tickets+"\nTotal Price: ₹"+(data.booking.totalPrice||0));
+await loadEvents();
+window.location.href="mybookings.html";
+}catch(error){
+console.error("BOOKING ERROR:",error);
+alert("Unable to process booking.");
+}
+}
+function escapeHtml(value){
+const div=document.createElement("div");
+div.textContent=String(value);
+return div.innerHTML;
+}
+loadEvents();
+</script>
+</body>
+</html> 

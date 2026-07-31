@@ -1,0 +1,297 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* Navbar */
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 60px;
+
+    background:linear-gradient(
+    90deg,
+    #ff512f,
+    #ff6a00,
+    #ffb347);
+
+    color:white;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.nav-links{
+    list-style:none;
+    display:flex;
+}
+
+.nav-links li{
+    margin-left:25px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.nav-links a:hover{
+    color:#fff176;
+}
+
+/* Register Section */
+
+.register-section{
+
+    min-height:90vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:linear-gradient(
+    #fff5e6,
+    #ffe0b2);
+
+}
+
+.register-box{
+
+    width:450px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    border-top:8px solid #ff6a00;
+
+    box-shadow:
+    0 10px 25px rgba(255,106,0,0.3);
+
+}
+
+.register-box h2{
+
+    text-align:center;
+
+    color:#ff512f;
+
+    margin-bottom:10px;
+}
+
+.register-box p{
+
+    text-align:center;
+
+    color:#666;
+
+    margin-bottom:20px;
+}
+
+.register-box input,
+.register-box select{
+
+    width:100%;
+
+    padding:12px;
+
+    margin-bottom:15px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:15px;
+}
+
+.register-box button{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    background:linear-gradient(
+    90deg,
+    #ff512f,
+    #ff6a00);
+}
+
+.register-box button:hover{
+
+    background:linear-gradient(
+    90deg,
+    #ff6a00,
+    #ff512f);
+
+}
+
+.login-link{
+
+    text-align:center;
+
+    margin-top:15px;
+}
+
+.login-link a{
+
+    color:#ff512f;
+
+    text-decoration:none;
+
+    font-weight:bold;
+}
+
+
+
+
+
+
+/* Login Page */
+
+.login-section{
+
+    min-height:90vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:linear-gradient(
+    #fff5e6,
+    #ffe0b2);
+
+}
+
+.login-box{
+
+    width:420px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    border-top:8px solid #ff6a00;
+
+    box-shadow:
+    0 10px 25px rgba(255,106,0,0.3);
+
+}
+
+.login-box h2{
+
+    text-align:center;
+
+    color:#ff512f;
+
+    margin-bottom:10px;
+
+}
+
+.login-box p{
+
+    text-align:center;
+
+    color:#666;
+
+    margin-bottom:20px;
+
+}
+
+.login-box input{
+
+    width:100%;
+
+    padding:12px;
+
+    margin-bottom:15px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+}
+
+.login-box button{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    background:linear-gradient(
+    90deg,
+    #ff512f,
+    #ff6a00);
+
+}
+
+.login-box button:hover{
+
+    background:linear-gradient(
+    90deg,
+    #ff6a00,
+    #ff512f);
+
+    transform:scale(1.03);
+
+}
+
+.register-link{
+
+    text-align:center;
+
+    margin-top:15px;
+
+}
+
+.register-link a{
+
+    color:#ff512f;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.register-link a:hover{
+
+    color:#ff6a00;
+
+}

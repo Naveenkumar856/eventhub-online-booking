@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Login - EventHub</title>
+    <link rel="stylesheet" href="stylelogin.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">
+        🎉 EventHub
+    </div>
+    <ul class="nav-links">
+        <li>
+            <a href="index.html">
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="register.html">
+                Register
+            </a>
+        </li>
+    </ul>
+</nav>
+<section class="login-section">
+    <div class="login-box">
+        <h2>
+            🔐 Login
+        </h2>
+        <p>
+            Login to continue to EventHub
+        </p>
+        <form id="loginForm">
+            <input
+                type="email"
+                id="email"
+                placeholder="Email Address"
+                autocomplete="email"
+                required
+            >
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                autocomplete="current-password"
+                required
+            >
+            <button
+                type="submit"
+                id="loginButton"
+            >
+                Login
+            </button>
+        </form>
+        <p id="message"></p>
+        <p>
+            Don't have an account?
+            <a href="register.html">
+                Register Here
+            </a>
+        </p>
+    </div>
+</section>
+<script>
+const form=document.getElementById("loginForm");
+const message=document.getElementById("message");
+const button=document.getElementById("loginButton");
+form.addEventListener("submit",async(event)=>{
+event.preventDefault();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+message.textContent="Logging in...";
+message.style.color="#ff6f00";
+button.disabled=true;
+try{
+const response=await fetch("/api/users/login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email:email,
+password:password
+})
+});
+const data=await response.json();
+console.log("LOGIN RESPONSE:",data);
+if(!response.ok){
+message.textContent=data.message||"Login failed";
+message.style.color="red";
+button.disabled=false;
+return;
+}
+if(!data.token){
+message.textContent="Token not received from server";
+message.style.color="red";
+button.disabled=false;
+return;
+}
+const user={
+id:data.user.id,
+name:data.user.name,
+email:data.user.email,
+role:data.user.role||"user"
+};
+localStorage.setItem("token",data.token);
+localStorage.setItem("user",JSON.stringify(data.user));
+console.log("TOKEN SAVED:",localStorage.getItem("token"));
+console.log("USER SAVED:",localStorage.getItem("user"));
+message.textContent="🎉 Login Successful!";
+message.style.color="green";
+setTimeout(()=>{
+if(user.role==="admin"){
+window.location.href="/dashboard.html";
+}else if(user.role==="organizer"){
+window.location.href="/organizer.html";
+}else{
+window.location.href="/events.html";
+}
+},700);
+}catch(error){
+console.error("LOGIN ERROR:",error);
+message.textContent="Unable to login: "+error.message;
+message.style.color="red";
+button.disabled=false;
+}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Bookings | EventHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fff8ef;color:#333;min-height:100vh}
+header{background:linear-gradient(135deg,#ff3d2e,#ff9418);color:white;text-align:center;padding:40px 20px}
+header h1{font-size:45px;margin-bottom:10px}
+header p{font-size:19px}
+nav{background:white;display:flex;justify-content:center;gap:25px;flex-wrap:wrap;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.1)}
+nav a{color:#e53935;text-decoration:none;font-size:17px;font-weight:bold;padding:10px 18px;border-radius:25px}
+nav a:hover{background:#ff5722;color:white}
+main{max-width:1200px;margin:auto;padding:50px 20px}
+.title{text-align:center;font-size:40px;color:#e53935;margin-bottom:10px}
+.subtitle{text-align:center;font-size:18px;color:#666;margin-bottom:40px}
+#bookingsContainer{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:25px}
+.booking-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.12);border-top:6px solid #ff5722}
+.banner{background:linear-gradient(135deg,#ff3d2e,#ff9418);padding:25px;text-align:center;font-size:40px}
+.content{padding:25px}
+.content h2{color:#e53935;font-size:25px;margin-bottom:18px}
+.content p{margin:11px 0;font-size:16px}
+.ticket{background:#fff1df;border:2px dashed #ff9418;border-radius:10px;padding:12px;text-align:center;margin:18px 0;color:#d9362b;font-weight:bold}
+.status{display:inline-block;background:#e7f7e7;color:#218838;padding:7px 14px;border-radius:20px;font-weight:bold}
+.cancel{width:100%;margin-top:18px;padding:13px;border:0;border-radius:25px;background:linear-gradient(90deg,#e53935,#ff5722);color:white;font-size:16px;font-weight:bold;cursor:pointer}
+.message{grid-column:1/-1;text-align:center;color:#e53935;font-size:21px;padding:50px}
+.empty{grid-column:1/-1;text-align:center;background:white;padding:45px;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.1)}
+.empty h2{color:#e53935;margin-bottom:15px}
+.empty a{display:inline-block;margin-top:20px;background:linear-gradient(90deg,#ff3d2e,#ff9418);color:white;text-decoration:none;padding:13px 25px;border-radius:25px;font-weight:bold}
+footer{background:#2d1a14;color:white;text-align:center;padding:25px;margin-top:40px}
+</style>
+</head>
+<body>
+<header>
+<h1>🎟 My Bookings</h1>
+<p id="welcome">Your Festival Tickets & Event Bookings</p>
+</header>
+<nav>
+<a href="index.html">🏠 Home</a>
+<a href="events.html">🎊 Events</a>
+<a href="mybookings.html">🎟 My Bookings</a>
+<a href="#" onclick="logout();return false;">🚪 Logout</a>
+</nav>
+<main>
+<h1 class="title">🎉 My Festival Tickets</h1>
+<p class="subtitle">View and manage your EventHub bookings</p>
+<div id="bookingsContainer">
+<div class="message">Loading bookings...</div>
+</div>
+</main>
+<footer>🎉 EventHub | Online Event Booking & Management System</footer>
+<script>
+let currentUser=null;
+try{
+const savedUser=localStorage.getItem("user");
+if(savedUser){
+currentUser=JSON.parse(savedUser);
+}
+}catch(error){
+console.error(error);
+}
+if(!currentUser){
+alert("Please login first.");
+window.location.href="login.html";
+}else{
+document.getElementById("welcome").textContent="Welcome "+(currentUser.name||"User")+" — Your Event Bookings";
+loadBookings();
+}
+async function loadBookings(){
+const container=document.getElementById("bookingsContainer");
+try{
+const response=await fetch("/api/bookings");
+const bookings=await response.json();
+if(!response.ok){
+container.innerHTML='<div class="message">'+escapeHtml(bookings.message||"Unable to load bookings.")+'</div>';
+return;
+}
+if(!Array.isArray(bookings)){
+container.innerHTML='<div class="message">Invalid booking information.</div>';
+return;
+}
+const userId=String(currentUser.id||currentUser._id||"");
+const myBookings=bookings.filter(booking=>{
+if(!booking.user)return false;
+const bookingUserId=typeof booking.user==="object"?(booking.user._id||booking.user.id):booking.user;
+return String(bookingUserId)===userId;
+});
+if(myBookings.length===0){
+container.innerHTML='<div class="empty"><h2>🎟 No Bookings Yet</h2><p>You have not booked any events yet.</p><a href="events.html">🎊 Browse Events</a></div>';
+return;
+}
+container.innerHTML="";
+myBookings.forEach(booking=>{
+const event=booking.event||{};
+const eventDate=event.date?new Date(event.date).toLocaleDateString("en-IN"):"Not available";
+const card=document.createElement("div");
+card.className="booking-card";
+card.innerHTML=`<div class="banner">🎉🎟️🎊</div><div class="content"><h2>${escapeHtml(event.title||"Festival Event")}</h2><p>📍 <strong>Venue:</strong> ${escapeHtml(event.venue||"Not available")}</p><p>📅 <strong>Date:</strong> ${eventDate}</p><p>🎟️ <strong>Tickets:</strong> ${Number(booking.tickets)||0}</p><p>💰 <strong>Total:</strong> ₹${Number(booking.totalPrice)||0}</p><div class="ticket">🎫 ${escapeHtml(booking.ticketNumber||"EventHub Ticket")}</div><span class="status">✓ Confirmed</span><button class="cancel" onclick="cancelBooking('${booking._id}')">Cancel Booking</button></div>`;
+container.appendChild(card);
+});
+}catch(error){
+console.error("MY BOOKINGS ERROR:",error);
+container.innerHTML='<div class="message">Unable to load bookings.</div>';
+}
+}
+async function cancelBooking(id){
+if(!confirm("Cancel this booking?"))return;
+try{
+const response=await fetch("/api/bookings/"+id,{method:"DELETE"});
+const data=await response.json();
+if(!response.ok){
+alert(data.message||"Unable to cancel booking.");
+return;
+}
+alert("Booking cancelled successfully.");
+loadBookings();
+}catch(error){
+console.error(error);
+alert("Unable to cancel booking.");
+}
+}
+function logout(){
+localStorage.removeItem("token");
+localStorage.removeItem("user");
+window.location.href="login.html";
+}
+function escapeHtml(value){
+const element=document.createElement("div");
+element.textContent=String(value);
+return element.innerHTML;
+}
+</script>
+</body>
+</html>

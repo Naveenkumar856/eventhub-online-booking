@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Register - EventHub</title>
+    <link rel="stylesheet" href="stylelogin.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">
+        🎉 EventHub
+    </div>
+    <ul class="nav-links">
+        <li>
+            <a href="index.html">
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="login.html">
+                Login
+            </a>
+        </li>
+    </ul>
+</nav>
+<section class="register-section">
+    <div class="register-box">
+        <h2>
+            🎉 Create Account
+        </h2>
+        <p>
+            Register to continue with EventHub
+        </p>
+        <form id="registerForm">
+            <input
+                type="text"
+                id="name"
+                placeholder="Full Name"
+                autocomplete="name"
+                required
+            >
+            <input
+                type="email"
+                id="email"
+                placeholder="Email Address"
+                autocomplete="email"
+                required
+            >
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+            <select
+                id="role"required  >
+                <option value="">
+                    Select Role
+                </option>
+                <option value="user">
+                    User
+                </option>
+                <option value="organizer">
+                    Organizer
+                </option>
+            </select>
+            <button
+                type="submit"
+                id="registerButton"
+            >
+                Register
+            </button>
+        </form>
+        <p id="message"></p>
+        <p>
+            Already have an account?
+            <a href="login.html">
+                Login Here
+            </a>
+        </p>
+    </div>
+</section>
+<script>
+const registerForm =
+    document.getElementById(
+        "registerForm"
+    );
+const registerButton =
+    document.getElementById(
+        "registerButton"
+    );
+const message =
+    document.getElementById(
+        "message"
+    );
+registerForm.addEventListener(
+    "submit",
+    async function(event) {
+        event.preventDefault();
+        message.textContent = "";
+        const name =
+            document
+                .getElementById("name")
+                .value
+                .trim();
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+        const password =
+            document
+                .getElementById("password")
+                .value;
+        const role =
+            document
+                .getElementById("role")
+                .value;
+        if (
+            !name ||
+            !email ||
+            !password ||
+            !role
+        ) {
+            message.textContent =
+                "Please fill all fields.";
+            return;
+        }
+        if (password.length < 6) {
+            message.textContent =
+                "Password must contain at least 6 characters.";
+            return;
+        }
+        registerButton.disabled = true;
+        registerButton.textContent =
+            "Registering...";
+        try {
+            const response=await fetch("/api/users/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name,email,password})
+});
+const data=await response.json();
+            console.log(
+                "Registration Response:",
+                data
+            );
+            if (response.ok) {
+                alert(
+                    "Registration Successful! Please Login."
+                );
+                registerForm.reset();
+                window.location.href =
+                    "login.html";
+                return;
+            }
+            message.textContent =
+                data.message ||
+                "Registration Failed";
+            registerButton.disabled =
+                false;
+            registerButton.textContent =
+                "Register";
+        } catch (error) {
+            console.error(
+                "Registration Error:",
+                error
+            );
+            message.textContent =
+                "Unable to connect to server";
+            registerButton.disabled =
+            false;
+            registerButton.textContent =
+                "Register";
+        }
+    }
+);
+</script>
+</body>
+</html>

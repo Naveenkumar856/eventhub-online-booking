@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Organizer Dashboard - EventHub</title>
+
+    <link rel="stylesheet" href="style.css">
+
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #fff8f0;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .organizer-header {
+
+            text-align: center;
+
+            padding: 50px 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff512f,
+                    #f09819
+                );
+
+            color: white;
+        }
+
+
+        .organizer-header h1 {
+
+            margin: 0 0 10px;
+
+            font-size: 38px;
+        }
+
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats-section {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 20px;
+
+            max-width: 900px;
+
+            margin: 40px auto;
+
+            padding: 0 20px;
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            padding: 25px;
+
+            text-align: center;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.12);
+        }
+
+
+        .stat-card h2 {
+
+            font-size: 32px;
+
+            margin: 0 0 10px;
+        }
+
+
+        /* =========================
+           EVENT FORM
+        ========================= */
+
+        .event-form-section {
+
+            max-width: 900px;
+
+            margin: 40px auto;
+
+            padding: 30px;
+
+            background: white;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.12);
+        }
+
+
+        .event-form-section h2 {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        #eventForm {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+        }
+
+
+        #eventForm input {
+
+            padding: 13px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+        }
+
+
+        #eventForm button {
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 25px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+
+        #saveButton {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff512f,
+                    #f09819
+                );
+
+            color: white;
+        }
+
+
+        #cancelEditButton {
+
+            background: #555;
+
+            color: white;
+        }
+
+
+        /* =========================
+           EVENTS
+        ========================= */
+
+        .manage-section {
+
+            max-width: 1200px;
+
+            margin: 50px auto;
+
+            padding: 20px;
+        }
+
+
+        .manage-section h2 {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .events-container {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(280px, 1fr)
+                );
+
+            gap: 25px;
+        }
+
+
+        .manage-card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.12);
+        }
+
+
+        .manage-card h3 {
+
+            margin-top: 0;
+
+            font-size: 23px;
+        }
+
+
+        .manage-card p {
+
+            margin: 10px 0;
+        }
+
+
+        .edit-btn,
+        .delete-btn {
+
+            padding: 10px 20px;
+
+            margin-top: 10px;
+
+            border: none;
+
+            border-radius: 20px;
+
+            cursor: pointer;
+        }
+
+
+        .edit-btn {
+
+            background: #f09819;
+
+            color: white;
+        }
+
+
+        .delete-btn {
+
+            background: #dc3545;
+
+            color: white;
+        }
+
+
+        .message {
+
+            text-align: center;
+
+            font-size: 18px;
+        }
+
+
+        @media(max-width: 700px) {
+
+            #eventForm {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+
+        🎉 EventHub
+
+    </div>
+
+
+    <ul class="nav-links">
+
+
+        <li>
+
+            <a href="index.html">
+
+                Home
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="events.html">
+
+                Events
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="organizer.html">
+
+                Organizer
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="#"
+               onclick="logout()">
+
+                Logout
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+</nav>
+
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<section class="organizer-header">
+
+
+    <h1>
+
+        🎯 Organizer Dashboard
+
+    </h1>
+
+
+    <p id="welcomeMessage">
+
+        Manage your events
+
+    </p>
+
+
+</section>
+
+
+
+<!-- =========================
+     STATISTICS
+========================= -->
+
+<section class="stats-section">
+
+
+    <div class="stat-card">
+
+        <h2 id="totalEvents">
+
+            0
+
+        </h2>
+
+        <p>
+
+            Total Events
+
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h2 id="totalSeats">
+
+            0
+
+        </h2>
+
+        <p>
+
+            Available Seats
+
+        </p>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================
+     ADD / EDIT EVENT
+========================= -->
+
+<section class="event-form-section">
+
+
+    <h2 id="formTitle">
+
+        ➕ Add New Event
+
+    </h2>
+
+
+    <form id="eventForm">
+
+
+        <input
+            type="text"
+            id="title"
+            placeholder="Event Name"
+            required
+        >
+
+
+        <input
+            type="text"
+            id="venue"
+            placeholder="Venue"
+            required
+        >
+
+
+        <input
+            type="date"
+            id="date"
+            required
+        >
+
+
+        <input
+            type="number"
+            id="price"
+            placeholder="Ticket Price"
+            min="0"
+            required
+        >
+
+
+        <input
+            type="number"
+            id="seats"
+            placeholder="Available Seats"
+            min="0"
+            required
+        >
+
+
+        <button
+            type="submit"
+            id="saveButton"
+        >
+
+            Add Event
+
+        </button>
+
+
+        <button
+            type="button"
+            id="cancelEditButton"
+            onclick="cancelEdit()"
+            style="display:none;"
+        >
+
+            Cancel Edit
+
+        </button>
+
+
+    </form>
+
+
+</section>
+
+
+
+<!-- =========================
+     MANAGE EVENTS
+========================= -->
+
+<section class="manage-section">
+
+
+    <h2>
+
+        🎪 Manage Events
+
+    </h2>
+
+
+    <div
+        id="eventsContainer"
+        class="events-container"
+    >
+
+        <p class="message">
+
+            Loading events...
+
+        </p>
+
+    </div>
+
+
+</section>
+<script>
+
+const API_URL = "http://localhost:5000";
+
+const token =
+    localStorage.getItem("token");
+
+const storedUser =
+    localStorage.getItem("user");
+
+let editingEventId = null;
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+if (!token || !storedUser) {
+
+    alert("Please login first.");
+
+    window.location.replace(
+        "login.html"
+    );
+
+}
+
+
+/* =========================
+   CHECK ORGANIZER ROLE
+========================= */
+
+let loggedInUser = null;
+
+if (storedUser) {
+
+    try {
+
+        loggedInUser =
+            JSON.parse(storedUser);
+
+    } catch (error) {
+
+        localStorage.clear();
+
+        window.location.replace(
+            "login.html"
+        );
+
+    }
+
+}
+
+
+if (
+    loggedInUser &&
+    loggedInUser.role !== "organizer"
+) {
+
+    alert(
+        "Organizer access only."
+    );
+
+    window.location.replace(
+        "index.html"
+    );
+
+}
+
+
+/* =========================
+   WELCOME MESSAGE
+========================= */
+
+if (
+    loggedInUser &&
+    loggedInUser.role === "organizer"
+) {
+
+    const welcomeMessage =
+        document.getElementById(
+            "welcomeMessage"
+        );
+
+    if (welcomeMessage) {
+
+        welcomeMessage.textContent =
+            "Welcome " +
+            loggedInUser.name +
+            " — Manage your events";
+
+    }
+
+}
+
+
+/* =========================
+   LOAD EVENTS
+========================= */
+
+async function loadEvents() {
+
+    const container =
+        document.getElementById(
+            "eventsContainer"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/events`
+            );
+
+        const events =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load events"
+            );
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        /* TOTAL EVENTS */
+
+        const totalEvents =
+            document.getElementById(
+                "totalEvents"
+            );
+
+        if (totalEvents) {
+
+            totalEvents.textContent =
+                events.length;
+
+        }
+
+
+        /* TOTAL SEATS */
+
+        const totalSeats =
+            events.reduce(
+                (total, event) =>
+                    total +
+                    Number(event.seats || 0),
+                0
+            );
+
+
+        const totalSeatsElement =
+            document.getElementById(
+                "totalSeats"
+            );
+
+
+        if (totalSeatsElement) {
+
+            totalSeatsElement.textContent =
+                totalSeats;
+
+        }
+
+
+        /* NO EVENTS */
+
+        if (events.length === 0) {
+
+            container.innerHTML =
+                "<p>No events available.</p>";
+
+            return;
+
+        }
+
+
+        /* DISPLAY EVENTS */
+
+        events.forEach((event) => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "manage-card";
+
+
+            const eventDate =
+                new Date(
+                    event.date
+                ).toLocaleDateString();
+
+
+            card.innerHTML = `
+
+                <h3>
+                    🎉 ${event.title}
+                </h3>
+
+                <p>
+                    📍 ${event.venue}
+                </p>
+
+                <p>
+                    📅 ${eventDate}
+                </p>
+
+                <p>
+                    🎟 ₹${event.price}
+                </p>
+
+                <p>
+                    💺 Seats: ${event.seats}
+                </p>
+
+                <button
+                    class="edit-btn"
+                    onclick="startEdit('${event._id}')"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteEvent('${event._id}')"
+                >
+                    Delete
+                </button>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Load Events Error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Unable to load events.</p>";
+
+    }
+
+}
+
+
+/* =========================
+   ADD / UPDATE EVENT
+========================= */
+
+document
+    .getElementById("eventForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const title =
+                document
+                    .getElementById("title")
+                    .value
+                    .trim();
+
+
+            const venue =
+                document
+                    .getElementById("venue")
+                    .value
+                    .trim();
+
+
+            const date =
+                document
+                    .getElementById("date")
+                    .value;
+
+
+            const price =
+                Number(
+                    document
+                        .getElementById("price")
+                        .value
+                );
+
+
+            const seats =
+                Number(
+                    document
+                        .getElementById("seats")
+                        .value
+                );
+
+
+            const eventData = {
+
+                title: title,
+
+                venue: venue,
+
+                date: date,
+
+                price: price,
+
+                seats: seats
+
+            };
+
+
+            let url =
+                `${API_URL}/api/events`;
+
+            let method =
+                "POST";
+
+
+            /* EDIT MODE */
+
+            if (editingEventId) {
+
+                url =
+                    `${API_URL}/api/events/${editingEventId}`;
+
+                method =
+                    "PUT";
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        url,
+                        {
+                            method: method,
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    `Bearer ${token}`
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    eventData
+                                )
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    /* TOKEN EXPIRED */
+
+                    if (
+                        response.status === 401
+                    ) {
+
+                        alert(
+                            "Login expired. Please login again."
+                        );
+
+                        logout();
+
+                        return;
+
+                    }
+
+
+                    alert(
+                        data.message ||
+                        "Unable to save event"
+                    );
+
+                    return;
+
+                }
+
+
+                if (editingEventId) {
+
+                    alert(
+                        "Event Updated Successfully"
+                    );
+
+                } else {
+
+                    alert(
+                        "Event Added Successfully"
+                    );
+
+                }
+
+
+                cancelEdit();
+
+                await loadEvents();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Save Event Error:",
+                    error
+                );
+
+                alert(
+                    "Unable to connect to server"
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================
+   START EDIT
+========================= */
+
+async function startEdit(eventId) {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/events/${eventId}`
+            );
+
+
+        const event =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                event.message ||
+                "Unable to load event"
+            );
+
+            return;
+
+        }
+
+
+        editingEventId =
+            event._id;
+
+
+        document.getElementById(
+            "title"
+        ).value =
+            event.title;
+
+
+        document.getElementById(
+            "venue"
+        ).value =
+            event.venue;
+
+
+        document.getElementById(
+            "date"
+        ).value =
+            event.date.substring(
+                0,
+                10
+            );
+
+
+        document.getElementById(
+            "price"
+        ).value =
+            event.price;
+
+
+        document.getElementById(
+            "seats"
+        ).value =
+            event.seats;
+
+
+        const formTitle =
+            document.getElementById(
+                "formTitle"
+            );
+
+
+        if (formTitle) {
+
+            formTitle.textContent =
+                "✏️ Edit Event";
+
+        }
+
+
+        const saveButton =
+            document.getElementById(
+                "saveButton"
+            );
+
+
+        if (saveButton) {
+
+            saveButton.textContent =
+                "Update Event";
+
+        }
+
+
+        const cancelButton =
+            document.getElementById(
+                "cancelEditButton"
+            );
+
+
+        if (cancelButton) {
+
+            cancelButton.style.display =
+                "block";
+
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit Error:",
+            error
+        );
+
+        alert(
+            "Unable to load event"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   CANCEL EDIT
+========================= */
+
+function cancelEdit() {
+
+    editingEventId = null;
+
+
+    document
+        .getElementById(
+            "eventForm"
+        )
+        .reset();
+
+
+    const formTitle =
+        document.getElementById(
+            "formTitle"
+        );
+
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "➕ Add New Event";
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    if (saveButton) {
+
+        saveButton.textContent =
+            "Add Event";
+
+    }
+
+
+    const cancelButton =
+        document.getElementById(
+            "cancelEditButton"
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================
+   DELETE EVENT
+========================= */
+
+async function deleteEvent(eventId) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this event?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                `${API_URL}/api/events/${eventId}`,
+
+                {
+
+                    method: "DELETE",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`
+
+                    }
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+
+            if (
+                response.status === 401
+            ) {
+
+                alert(
+                    "Login expired. Please login again."
+                );
+
+                logout();
+
+                return;
+
+            }
+
+
+            alert(
+                data.message ||
+                "Unable to delete event"
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "Event Deleted Successfully"
+        );
+
+
+        await loadEvents();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete Error:",
+            error
+        );
+
+        alert(
+            "Unable to connect to server"
+        );
+
+    }
+}
+function logout() {
+
+    localStorage.removeItem(
+        "user"
+    );
+
+    localStorage.removeItem(
+        "token"
+    );
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+    window.location.replace(
+        "login.html"
+    );
+
+}
+if (
+    token &&
+    loggedInUser &&
+    loggedInUser.role === "organizer"
+) {
+
+    loadEvents();
+
+}
+
+</script>
+</body>
+
+</html>
